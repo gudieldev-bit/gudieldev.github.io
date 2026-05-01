@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUDIEL-2026</title>
+</head>
+<body style="font-family:Arial;padding:15px;background:#333;margin:0">
+<div style="background:white;padding:20px;border-radius:10px;max-width:400px;margin:auto">
+<h2 style="text-align:center;color:#007bff;margin:0">CALCULADORA GUDIEL-2026</h2>
+<p style="text-align:center;font-size:11px;color:#666;margin:5px 0 20px 0">Propina individual por persona</p>
+
+<b>1. Consumo Total Q</b><br>
+<input id="consumo" style="width:100%;height:50px;font-size:20px;margin:5px 0 15px 0;padding:5px;border:2px solid #ccc;border-radius:5px"><br>
+
+<b>2. Propina %</b><br>
+<button onclick="p=0" style="width:23%;height:40px;margin:1%">0%</button>
+<button onclick="p=10" style="width:23%;height:40px;margin:1%;background:#007bff;color:white">10%</button>
+<button onclick="p=15" style="width:23%;height:40px;margin:1%">15%</button>
+<button onclick="p=20" style="width:23%;height:40px;margin:1%">20%</button>
+<input id="propinaManual" placeholder="O % manual" style="width:100%;height:45px;font-size:18px;margin:8px 0 15px 0;padding:5px;border:2px solid #ccc;border-radius:5px"><br>
+
+<b>3. Entre cuántas personas</b><br>
+<input id="personas" value="1" style="width:100%;height:50px;font-size:20px;margin:5px 0 15px 0;padding:5px;border:2px solid #ccc;border-radius:5px"><br>
+
+<button onclick="calcular()" style="width:100%;height:55px;font-size:18px;background:#28a745;color:white;border:none;border-radius:8px;font-weight:bold">CALCULAR TOTAL</button>
+
+<div id="res" style="margin-top:20px;padding:15px;background:#f0f0f0;border-radius:8px;display:none"></div>
+</div>
+
+<script>
+var p = 10;
+function calcular(){
+  c = document.getElementById('consumo').value*1;
+  if(c<=0){alert('Pon el monto de consumo');return}
+  
+  pm = document.getElementById('propinaManual').value*1;
+  if(pm>0) p = pm;
+  
+  per = document.getElementById('personas').value*1;
+  if(per<1) per=1;
+  
+  // 1. Dividir SOLO el consumo entre personas, exacto en centavos
+  centConsumo = Math.round(c*100);
+  baseConsumo = Math.floor(centConsumo/per);
+  sobraConsumo = centConsumo%per;
+  
+  h = 'Consumo Total: Q'+c.toFixed(2)+'<br>';
+  h += 'Propina: '+p+'%<br><br>';
+  h += '<div style="border-top:2px solid #333;padding-top:10px"><b>Desglose por persona:</b><br><br>';
+  
+  totalGeneral = 0;
+  
+  for(i=1;i<=per;i++){
+    // Consumo de esta persona
+    cb = baseConsumo;
+    if(i<=sobraConsumo) cb++;
+    consumoPersona = cb/100;
+    
+    // Propina de esta persona sobre su consumo
+    propinaPersona = consumoPersona * p/100;
+    totalPersona = consumoPersona + propinaPersona;
+    totalGeneral += totalPersona;
+    
+    h += 'Persona '+i+':<br>';
+    h += '&nbsp;&nbsp;Consumo: Q'+consumoPersona.toFixed(2)+'<br>';
+    h += '&nbsp;&nbsp;Propina: Q'+propinaPersona.toFixed(2)+'<br>';
+    h += '&nbsp;&nbsp;<b>Total: Q'+totalPersona.toFixed(2)+'</b><br><br>';
+  }
+  
+  h += '</div>';
+  h += '<div style="border-top:2px solid #28a745;padding-top:10px;margin-top:10px">';
+  h += '<b style="font-size:20px;color:#28a745">TOTAL GENERAL: Q'+totalGeneral.toFixed(2)+'</b>';
+  h += '</div>';
+  
+  document.getElementById('res').innerHTML = h;
+  document.getElementById('res').style.display = 'block';
+}
+</script>
+</body>
+</html>
